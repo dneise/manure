@@ -1,9 +1,8 @@
 from os import makedirs
 from os.path import join
 from os.path import exists
+from os.path import dirname
 from datetime import datetime
-import shutil
-import pkg_resources
 import pandas as pd
 from tqdm import tqdm
 from fact.credentials import create_factdb_engine
@@ -18,13 +17,6 @@ FROM
 WHERE
     fRunTypeKey={0}
 '''.format(OBSERVATION_RUN_KEY)
-
-
-def copy_top_level_readme_to(path):
-    readme_res_path = pkg_resources.resource_filename(
-        'fad_counters_to_gps_time', 'README.md'
-    )
-    shutil.copy(readme_res_path, path)
 
 
 def check_for_input_files(runstatus):
@@ -67,6 +59,8 @@ class RunStatus:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._remove_paths()
+
+        makedirs(dirname(self.path), exist_ok=True)
         self.runstatus.to_csv(self.path)
 
     def _add_paths(self):
@@ -93,12 +87,10 @@ class RunStatus:
 def production_main(
         path_gens,
         function_to_call_with_job,
+        runstatus_path,
         out_dir
 ):
-    makedirs(out_dir, exist_ok=True)
-    copy_top_level_readme_to(join(out_dir, 'README.md'))
-
-    with RunStatus(join(out_dir, 'runstatus.csv'), path_gens) as runstatus:
+    with RunStatus(runstatus_path, path_gens) as runstatus:
 
         runstatus['input_file_exists'] = check_for_input_files(runstatus)
 
