@@ -1,4 +1,5 @@
 from os import makedirs
+from os import remove
 from os.path import join
 from os.path import exists
 from os.path import dirname
@@ -27,11 +28,19 @@ def qsub(
     args=['input_file_path', 'output_file_path'],
     queue='fact_medium',
     o_path=None,
-    e_path=None
+    e_path=None,
 ):
 
     o_path = job[o_path] if o_path is not None else '/dev/null'
     e_path = job[e_path] if e_path is not None else '/dev/null'
+
+    for p in [o_path, e_path]:
+        if p == '/dev/null':
+            break
+        if exists(p):
+            remove(p)
+        else:
+            makedirs(dirname(p), exist_ok=True)
 
     cmd = [
         'qsub',
