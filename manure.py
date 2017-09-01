@@ -47,8 +47,10 @@ class RunStatus:
 
         runstatus = pd.read_sql(SQL_QUERY, create_factdb_engine())
         if exists(self.path):
+            old_runstatus = pd.read_csv(self.path)
+            old_runstatus['submitted_at'] = pd.to_datetime(old_runstatus.submitted_at)
             runstatus = runstatus.merge(
-                pd.read_csv(self.path),
+                old_runstatus,
                 on=list(runstatus.columns),
                 how='outer',
             )
