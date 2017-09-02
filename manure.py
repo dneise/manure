@@ -56,15 +56,15 @@ def qsub(
 
 
 def check_for_input_files(runstatus):
-    input_file_exists = runstatus.input_file_exists.values.copy()
-    to_check = runstatus[~runstatus.input_file_exists]
+    is_input_complete = runstatus.is_input_complete.values.copy()
+    to_check = runstatus[~runstatus.is_input_complete]
     for run in tqdm(
         to_check.itertuples(),
         desc='searching for input files',
         total=len(to_check)
     ):
-        input_file_exists[run.Index] = exists(run.input_file_path)
-    return input_file_exists
+        is_input_complete[run.Index] = exists(run.input_file_path)
+    return is_input_complete
 
 
 class RunStatus:
@@ -82,9 +82,9 @@ class RunStatus:
                 on=list(runstatus.columns),
                 how='outer',
             )
-            runstatus.input_file_exists.fillna(False, inplace=True)
+            runstatus.is_input_complete.fillna(False, inplace=True)
         else:
-            runstatus['input_file_exists'] = False
+            runstatus['is_input_complete'] = False
             runstatus['submitted_at'] = pd.Timestamp('nat')
 
         self.runstatus = runstatus
@@ -129,10 +129,10 @@ def production_main(
     sql_query = sql_query if sql_query is not None else SQL_QUERY
     with RunStatus(runstatus_path, path_generators, sql_query) as runstatus:
 
-        runstatus['input_file_exists'] = check_for_input_files(runstatus)
+        runstatus['is_input_complete'] = check_for_input_files(runstatus)
 
         runs_not_yet_submitted = runstatus[
-            runstatus.input_file_exists &
+            runstatus.is_input_complete &
             np.isnat(runstatus.submitted_at)
         ]
 
