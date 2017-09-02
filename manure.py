@@ -3,7 +3,7 @@ from os import remove
 from os.path import join
 from os.path import exists
 from os.path import dirname
-from shutils import which
+from shutil import which
 from datetime import datetime
 import pandas as pd
 from tqdm import tqdm
