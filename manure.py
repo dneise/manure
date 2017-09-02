@@ -49,7 +49,7 @@ def qsub(
         '-e', e_path,
         which(binary_name),
     ]
-    cmd.extend([job[arg] for arg in args])
+    cmd.extend([getattr(job, arg) for arg in args])
 
     sp.check_output(cmd, stderr=sp.STDOUT)
 
