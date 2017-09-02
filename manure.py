@@ -55,7 +55,7 @@ def qsub(
     sp.check_output(cmd, stderr=sp.STDOUT)
 
 
-def check_for_input_files(runstatus):
+def check_is_input_complete(runstatus):
     is_input_complete = runstatus.is_input_complete.values.copy()
     to_check = runstatus[~runstatus.is_input_complete]
     for run in tqdm(
@@ -129,7 +129,7 @@ def production_main(
     sql_query = sql_query if sql_query is not None else SQL_QUERY
     with RunStatus(runstatus_path, path_generators, sql_query) as runstatus:
 
-        runstatus['is_input_complete'] = check_for_input_files(runstatus)
+        runstatus['is_input_complete'] = check_is_input_complete(runstatus)
 
         runs_not_yet_submitted = runstatus[
             runstatus.is_input_complete &
