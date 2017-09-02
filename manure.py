@@ -22,13 +22,15 @@ WHERE
 
 
 def qsub(
-    job,
-    binary_name,
-    args=['input_file_path', 'output_file_path'],
-    queue='fact_medium',
-    o_path=None,
-    e_path=None,
-):
+        job,
+        binary_name,
+        args=[
+            'input_file_path',
+            'output_file_path'],
+        queue='fact_medium',
+        o_path=None,
+        e_path=None,
+        ):
 
     o_path = job[o_path] if o_path is not None else '/dev/null'
     e_path = job[e_path] if e_path is not None else '/dev/null'
