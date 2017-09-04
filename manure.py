@@ -9,6 +9,7 @@ from tqdm import tqdm
 from fact.credentials import create_factdb_engine
 import numpy as np
 import subprocess as sp
+import filelock
 
 OBSERVATION_RUN_KEY = 1
 SQL_QUERY = '''
@@ -79,8 +80,11 @@ class RunStatus:
 
         runstatus = pd.read_sql(sql_query, create_factdb_engine())
         if exists(self.path):
-            old_runstatus = pd.read_csv(self.path)
-            old_runstatus['submitted_at'] = pd.to_datetime(old_runstatus.submitted_at)
+            old_runstatus = pd.read_csv(
+                self.path,
+                sep='\t',
+                parse_dates=['submitted_at']
+            )
             runstatus = runstatus.merge(
                 old_runstatus,
                 on=list(runstatus.columns),
@@ -105,6 +109,7 @@ class RunStatus:
             self.path,
             index=False,
             na_rep='nan',
+            sep='\t',
         )
 
     def _add_paths(self):
