@@ -1,5 +1,11 @@
-# manure
-Very lightweight, helps "production" as typically done in FACT. Be it analysis or simulation
+# Manure
+
+is a very lightweight (1 file; < 200 lines) tool for you, to execute your analysis on many input runs at ISDC.
+
+I tried below to write a helpful README, but I think I failed, as the README
+got nearly as long as the code, while I am not half finished explaining all
+I think is imporant. So .. I assume you'll have to look at an example
+and otherwise look at the code.
 
 # How to make use of manure:
 
