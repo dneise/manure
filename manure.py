@@ -32,8 +32,8 @@ def qsub(
         e_path=None,
         ):
 
-    o_path = job[o_path] if o_path is not None else '/dev/null'
-    e_path = job[e_path] if e_path is not None else '/dev/null'
+    o_path = getattr(job, o_path) if o_path is not None else '/dev/null'
+    e_path = getattr(job, e_path) if e_path is not None else '/dev/null'
 
     for p in [o_path, e_path]:
         if p == '/dev/null':
@@ -50,7 +50,7 @@ def qsub(
         '-e', e_path,
         which(binary_name),
     ]
-    cmd.extend([job[arg] for arg in args])
+    cmd.extend([getattr(job, arg) for arg in args])
 
     sp.check_output(cmd, stderr=sp.STDOUT)
 
