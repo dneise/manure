@@ -101,7 +101,11 @@ class RunStatus:
         self._remove_paths()
 
         makedirs(dirname(self.path), exist_ok=True)
-        self.runstatus.to_csv(self.path)
+        self.runstatus.to_csv(
+            self.path,
+            index=False,
+            na_rep='nan',
+        )
 
     def _add_paths(self):
         for row in tqdm(
