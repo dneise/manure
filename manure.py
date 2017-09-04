@@ -128,20 +128,12 @@ def production_main(
         path_generators,
         submission,
         runstatus_path,
-        sql_query=None,
-        is_input_complete_check_function=None,
 ):
-    sql_query = sql_query if sql_query is not None else SQL_QUERY
-    with RunStatus(runstatus_path, path_generators, sql_query) as runstatus:
-
-        if is_input_complete_check_function is None:
-            runcheck_function = single_check_is_input_complete
-        else:
-            runcheck_function = is_input_complete_check_function
+    with RunStatus(runstatus_path, path_generators, SQL_QUERY) as runstatus:
 
         runstatus['is_input_complete'] = check_is_input_complete(
             runstatus,
-            runcheck_function
+            single_check_is_input_complete
         )
 
         runs_not_yet_submitted = runstatus[
