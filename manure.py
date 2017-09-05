@@ -74,9 +74,15 @@ def check_is_input_complete(runstatus, runcheck_function):
 
 class RunStatus:
 
-    def __init__(self, path, path_generators, sql_query):
+    def __init__(self, path, path_generators={}, sql_query=SQL_QUERY):
         self.path = path
         self.path_generators = path_generators
+        self.filelock = filelock.FileLock(path+'.lock', timeout=1)
+        try:
+            self.filelock.acquire()
+        except filelock.Timeout:
+            print('Some other process is currently using:', path)
+            raise
 
         runstatus = pd.read_sql(sql_query, create_factdb_engine())
         if exists(self.path):
@@ -103,6 +109,7 @@ class RunStatus:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._remove_paths()
+        self.filelock.release()
 
         makedirs(dirname(self.path), exist_ok=True)
         self.runstatus.to_csv(
